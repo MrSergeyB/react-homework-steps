@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import "./input-form.css";
-import InputDisplay from "../info-display";
+import Display from "../display";
 import {v4 as uuidv4} from "uuid";
 
 const InputForm = () => {
@@ -125,7 +125,7 @@ const InputForm = () => {
           .sort((a, b) => new Date(a.date) - new Date(b.date))
           .map(({id, date, distance}) => {
             return (
-              <InputDisplay
+              <Display
                 key={id}
                 id={id}
                 date={date}

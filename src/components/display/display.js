@@ -1,5 +1,5 @@
 import React from "react";
-import "./info-display.css";
+import "./display.css";
 
 const InfoDisplay = ({id, date, distance, deleteInput, editInput}) => {
   const handleDelete = () => {
