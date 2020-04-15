@@ -1,99 +1,34 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import "./input-form.css";
-import Display from "../display";
-import {v4 as uuidv4} from "uuid";
 
-const InputForm = () => {
-  const [inputs, setInputs] = useState([
-    {
-      id: 1,
-      date: "11.07.2019",
-      distance: 11,
-    },
-    {
-      id: 2,
-      date: "12.09.2019",
-      distance: 14,
-    },
-    {
-      id: 3,
-      date: "10.05.2019",
-      distance: 14,
-    },
-  ]);
-
+const InputForm = (props) => {
   const [date, setDate] = useState("");
   const [distance, setDistance] = useState("");
-  const [alert, setAlert] = useState("");
 
-  const handleClick = (e) => {
+  const {handleClick, editMode, editingInput, addEditedInput} = props;
+
+  useEffect(() => {
+    if (editMode) {
+      setDate(editingInput.date);
+      setDistance(editingInput.distance);
+    }
+  }, [editingInput.date, editingInput.distance, editMode]);
+
+  const submitInput = (e) => {
     e.preventDefault();
-    setAlert("");
-    const regex = /^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$/;
-    if (regex.test(date) && distance.length > 0) {
-      let checkForSameDate = inputs.filter((input) => {
-        return input.date === date;
-      });
-
-      if (checkForSameDate.length > 0) {
-        let filteredInputs = inputs.filter((input) => {
-          return input.date !== date;
-        });
-        setInputs([
-          ...filteredInputs,
-          {
-            id: checkForSameDate[0].id,
-            date: checkForSameDate[0].date,
-            distance:
-              parseInt(checkForSameDate[0].distance) + parseInt(distance),
-          },
-        ]);
-        resetInputs();
-      } else if (checkForSameDate.length === 0) {
-        setInputs([
-          ...inputs,
-          {
-            id: uuidv4(),
-            date: date,
-            distance: distance,
-          },
-        ]);
-
-        resetInputs();
-      }
+    if (editMode) {
+      addEditedInput(editingInput.id, date, distance);
+      setDate("");
+      setDistance("");
     } else {
-      setAlert("Please check date formant. Distance field should not be empty");
-      resetInputs();
+      handleClick(date, distance);
+      setDate("");
+      setDistance("");
     }
   };
 
-  const resetInputs = () => {
-    setDate("");
-    setDistance("");
-  };
-
-  const deleteInput = (id) => {
-    let filteredInputs = inputs.filter((input) => {
-      return input.id !== id;
-    });
-    setInputs([...filteredInputs]);
-  };
-
-  const editInput = (id) => {
-    let editingInput = inputs.filter((input) => {
-      return input.id === id;
-    });
-
-    setDate(editingInput[0].date);
-    setDistance(editingInput[0].distance);
-    let filteredInputs = inputs.filter((input) => {
-      return input.id !== id;
-    });
-    setInputs([...filteredInputs]);
-  };
-
   return (
-    <div className="container">
+    <div>
       <div className="form-wraper">
         <form className="form">
           <div className="input-container">
@@ -115,29 +50,11 @@ const InputForm = () => {
               onChange={(event) => setDistance(event.target.value)}
             />
           </div>
-          <button className="btn" onClick={handleClick}>
+          <button className="btn" onClick={submitInput}>
             ok
           </button>
         </form>
       </div>
-      <div className="display">
-        {inputs
-          .sort((a, b) => new Date(a.date) - new Date(b.date))
-          .map(({id, date, distance}) => {
-            return (
-              <Display
-                key={id}
-                id={id}
-                date={date}
-                distance={distance}
-                deleteInput={deleteInput}
-                editInput={editInput}
-                alert={alert}
-              />
-            );
-          })}
-      </div>
-      {alert ? alert : null}
     </div>
   );
 };

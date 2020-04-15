@@ -14,3 +14,10 @@
   color: black;
   font-size: 12px;
 }
+
+.display {
+  border: 1px solid black;
+  margin-top: 3em;
+  border-radius: 10px;
+  width: 400px;
+}
